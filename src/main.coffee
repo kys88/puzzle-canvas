@@ -22,6 +22,8 @@ document.body.addEventListener 'touchmove', (event) ->
 	Two pieces
 	###
 
+	dropZoneLayer = new P.Layer()
+	piecesLayer = new P.Layer()
 	pieces = []
 
 	for i in [0..1]
@@ -31,6 +33,7 @@ document.body.addEventListener 'touchmove', (event) ->
 		dropZone.fillColor = 'white'
 		dropZone.opacity = 0.5
 		dropZone.position.x = i * rectangle.width + rectangle.width / 2
+		dropZoneLayer.addChild dropZone
 
 		# The edge will serve as the mask for the piece
 		pieceEdge = new P.Shape.Rectangle rectangle
@@ -49,6 +52,7 @@ document.body.addEventListener 'touchmove', (event) ->
 		pieceGroup.clipped = true
 		pieceGroup.position.x = i * rectangle.width / 2 + rectangle.width / 2
 		pieceGroup.strokeColor = 'black'
+		piecesLayer.addChild pieceGroup
 
 		pieces.push
 			zone: dropZone
@@ -95,6 +99,9 @@ document.body.addEventListener 'touchmove', (event) ->
 		# Possibly snap to grid
 		if actualPiece.zone.contains event.point
 			actualPiece.group.position = background.position
+
+			# Send behind all the other pieces
+			actualPiece.group.sendToBack()
 
 		# Reset
 		for piece in pieces
