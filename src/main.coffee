@@ -1,10 +1,13 @@
-#document.body.addEventListener 'touchmove', (event) ->
-#	event.preventDefault()
+# Prevent iOS Safari from doing the scroll thing
+document.body.addEventListener 'touchmove', (event) ->
+	event.preventDefault()
 
+# Anonymous function to map paper to P
 ((P) ->
 	canvas = document.getElementById 'canvas'
 	P.setup canvas
 
+	# Set the background image
 	background = new P.Raster
 		source: '//hufkens.net/wp-content/uploads/2012/10/bumba-win8.png'
 		position: new P.Point P.view.center.x, .7 * P.view.center.y
@@ -13,6 +16,7 @@
 	background.onLoad = () ->
 		@size = new P.Size P.view.size.width, .7 * P.view.size.height
 
+	# The rectangle used for the cutout of the pieces
 	rectangle = new P.Rectangle 0, 0, P.view.size.width / 4, .7 * P.view.size.height / 4
 	
 	###
@@ -22,10 +26,10 @@
 	pieces = []
 
 	for i in [0..1]
+		
+		# The edge will serve as the mask for the piece
 		pieceEdge = new P.Shape.Rectangle rectangle
 		pieceEdge.set
-			strokeColor: 'black'
-			strokeWidth: 0
 			selected: true
 
 		pieceBackground = new P.Raster
@@ -35,6 +39,7 @@
 		pieceBackground.onLoad = () ->
 			@size = new P.Size P.view.size.width, .7 * P.view.size.height
 
+		# Create a Group using the mask and the background
 		pieceGroup = new P.Group pieceEdge, pieceBackground, pieceEdge.clone()
 		pieceGroup.clipped = true
 		pieceGroup.position.x = i * rectangle.width / 2 + rectangle.width / 2
@@ -44,6 +49,10 @@
 			edge: pieceEdge
 			group: pieceGroup
 
+	###
+	Mouse events
+	###
+
 	actualPiece = null
 	dragging = false
 
@@ -52,7 +61,6 @@
 		return if dragging
 
 		# Reset
-		piece.group.strokeWidth = 0 for piece in pieces
 		possiblePieces = []
 		actualPiece = null
 
@@ -72,6 +80,9 @@
 		actualPiece.group.bringToFront()
 
 	tool.onMouseUp = (event) ->
+
+		# Reset
+		piece.group.strokeWidth = 0 for piece in pieces
 		actualPiece = null
 		dragging = false
 
