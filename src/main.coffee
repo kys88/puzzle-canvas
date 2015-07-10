@@ -11,7 +11,6 @@ document.body.addEventListener 'touchmove', (event) ->
 	background = new P.Raster
 		source: '//hufkens.net/wp-content/uploads/2012/10/bumba-win8.png'
 		position: new P.Point P.view.center.x, .7 * P.view.center.y
-		opacity: .7
 
 	background.onLoad = () ->
 		@size = new P.Size P.view.size.width, .7 * P.view.size.height
@@ -27,6 +26,12 @@ document.body.addEventListener 'touchmove', (event) ->
 
 	for i in [0..1]
 		
+		# The dropzone for the piece
+		dropZone = new P.Shape.Rectangle rectangle
+		dropZone.fillColor = 'white'
+		dropZone.opacity = 0.5
+		dropZone.position.x = i * rectangle.width + rectangle.width / 2
+
 		# The edge will serve as the mask for the piece
 		pieceEdge = new P.Shape.Rectangle rectangle
 		pieceEdge.set
@@ -34,7 +39,7 @@ document.body.addEventListener 'touchmove', (event) ->
 
 		pieceBackground = new P.Raster
 			source: '//hufkens.net/wp-content/uploads/2012/10/bumba-win8.png'
-			position: new P.Point P.view.center.x, .7 * P.view.center.y
+			position: new P.Point P.view.center.x - i * rectangle.width, .7 * P.view.center.y
 
 		pieceBackground.onLoad = () ->
 			@size = new P.Size P.view.size.width, .7 * P.view.size.height
@@ -46,6 +51,7 @@ document.body.addEventListener 'touchmove', (event) ->
 		pieceGroup.strokeColor = 'black'
 
 		pieces.push
+			zone: dropZone
 			edge: pieceEdge
 			group: pieceGroup
 
@@ -87,10 +93,17 @@ document.body.addEventListener 'touchmove', (event) ->
 		dragging = false
 
 	tool.onMouseMove = (event) ->
+
+		# Reset
+		piece.zone.fillColor = 'white' for piece in pieces
+
 		return unless actualPiece
 		dragging = true
 		actualPiece.group.position.x += event.delta.x
 		actualPiece.group.position.y += event.delta.y
 
+		for piece in pieces
+			if piece.zone.contains event.point
+				piece.zone.fillColor = 'gray'
 
 )(paper)
