@@ -24,16 +24,20 @@ document.body.addEventListener 'touchmove', (event) ->
 
 	pieceEdges = [{
 		left: 0
-		right: 1
+		right: 1,
+		bottom: -1
 	}, {
 		left: -1,
-		right: -1
+		right: -1,
+		bottom: 1
 	}, {
 		left: 1,
-		right: -1
+		right: -1,
+		bottom: -1
 	}, {
 		left: 1,
-		right: 0
+		right: 0,
+		bottom: -1
 	}]
 
 	dropZoneLayer = new P.Layer()
@@ -63,7 +67,6 @@ document.body.addEventListener 'touchmove', (event) ->
 			puzzle.quadraticCurveTo new P.Point(W, H / 2), new P.Point(W + H / 4, H / 4)
 			puzzle.cubicCurveTo new P.Point(W + H / 2, 0), new P.Point(W + H / 2, H), new P.Point(W + H / 4, H * 3 / 4)
 			puzzle.quadraticCurveTo new P.Point(W, H / 2), new P.Point(W, H * 3 / 4)
-			puzzle.lineTo new P.Point W, H
 		
 		else if pieceEdges[i].right is -1
 
@@ -72,14 +75,33 @@ document.body.addEventListener 'touchmove', (event) ->
 			puzzle.quadraticCurveTo new P.Point(W, H / 2), new P.Point(W - H / 4, H / 4)
 			puzzle.cubicCurveTo new P.Point(W - H / 2, 0), new P.Point(W - H / 2, H), new P.Point(W - H / 4, H * 3 / 4)
 			puzzle.quadraticCurveTo new P.Point(W, H / 2), new P.Point(W, H * 3 / 4)
-			puzzle.lineTo new P.Point W, H
 
-		else
-
-			# Straight
-			puzzle.lineTo new P.Point W, H
+		# Straight
+		puzzle.lineTo new P.Point W, H
 		
 		# Bottom edge
+		zero = (rectangle.width - rectangle.height) / 2
+		one = zero + rectangle.height
+		quarter = rectangle.height / 4
+		half = rectangle.height / 2
+		
+		if pieceEdges[i].bottom is 1
+
+			# Outwards
+			puzzle.lineTo new P.Point one - quarter, H
+			puzzle.quadraticCurveTo new P.Point(one - half, H), new P.Point(one - quarter, H + quarter)
+			puzzle.cubicCurveTo new P.Point(one, H + half), new P.Point(zero, H + half), new P.Point(zero + quarter, H + quarter)
+			puzzle.quadraticCurveTo new P.Point(zero + half, H), new P.Point(zero + quarter, H)
+
+		else if pieceEdges[i].bottom is -1
+
+			# Outwards
+			puzzle.lineTo new P.Point one - quarter, H
+			puzzle.quadraticCurveTo new P.Point(one - half, H), new P.Point(one - quarter, H - quarter)
+			puzzle.cubicCurveTo new P.Point(one, H - half), new P.Point(zero, H - half), new P.Point(zero + quarter, H - quarter)
+			puzzle.quadraticCurveTo new P.Point(zero + half, H), new P.Point(zero + quarter, H)
+
+		# Straight
 		puzzle.lineTo new P.Point 0, H
 		
 		# Left edge
