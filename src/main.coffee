@@ -16,7 +16,7 @@ document.body.addEventListener 'touchmove', (event) ->
 		@size = new P.Size P.view.size.width, .7 * P.view.size.height
 
 	# The rectangle used for the cutout of the pieces
-	rectangle = new P.Rectangle 0, 0, P.view.size.width / 4, .7 * P.view.size.height / 4
+	rectangle = new P.Rectangle 0, 0, P.view.size.width / 3, .7 * P.view.size.height / 3
 
 	###
 	Top row
@@ -25,26 +25,55 @@ document.body.addEventListener 'touchmove', (event) ->
 	pieceEdges = [{
 		left: 0
 		right: 1,
-		bottom: -1
+		top: 0,
+		bottom: 1
 	}, {
 		left: -1,
 		right: -1,
+		top: 0,
 		bottom: 1
 	}, {
 		left: 1,
+		right: 0,
+		top: 0,
+		bottom: 1
+	}, {
+		left: 0,
+		right: 1,
+		top: -1,
+		bottom: 1
+	}, {
+		left: -1,
 		right: -1,
-		bottom: -1
+		top: -1,
+		bottom: 1
 	}, {
 		left: 1,
 		right: 0,
+		top: -1,
 		bottom: -1
+	}, {
+		left: 0,
+		right: -1,
+		top: -1,
+		bottom: 0
+	}, {
+		left: 1,
+		right: -1,
+		top: -1,
+		bottom: 0
+	}, {
+		left: 1,
+		right: 0,
+		top: 1,
+		bottom: 0
 	}]
 
 	dropZoneLayer = new P.Layer()
 	piecesLayer = new P.Layer()
 	pieces = []
 
-	for i in [0..3]
+	for i in [0..8]
 
 		# An actual puzzle piece shape
 		W = rectangle.width
@@ -59,6 +88,26 @@ document.body.addEventListener 'touchmove', (event) ->
 		puzzle.moveTo 0, 0
 
 		# Top edge
+		zero = (rectangle.width - rectangle.height) / 2
+		one = zero + rectangle.height
+		half = rectangle.height / 2
+
+		if pieceEdges[i].top is 1
+
+			# Outwards
+			puzzle.lineTo new P.Point zero + 3 * E, 0
+			puzzle.quadraticCurveTo new P.Point(zero + half, 0), new P.Point(zero + 3 * E, -E)
+			puzzle.cubicCurveTo new P.Point(zero + 2 * E, -2 * E), new P.Point(one - 2 * E, -2 * E), new P.Point(one - 3 * E, -E)
+			puzzle.quadraticCurveTo new P.Point(one - half, 0), new P.Point(one - 3 * E, 0)
+
+		else if pieceEdges[i].top is -1
+
+			# Inwards
+			puzzle.lineTo new P.Point zero + 3 * E, 0
+			puzzle.quadraticCurveTo new P.Point(zero + half, 0), new P.Point(zero + 3 * E, E)
+			puzzle.cubicCurveTo new P.Point(zero + 2 * E, 2 * E), new P.Point(one - 2 * E, 2 * E), new P.Point(one - 3 * E, E)
+			puzzle.quadraticCurveTo new P.Point(one - half, 0), new P.Point(one - 3 * E, 0)
+
 		puzzle.lineTo new P.Point W, 0
 		
 		# Right edge
@@ -82,11 +131,6 @@ document.body.addEventListener 'touchmove', (event) ->
 		puzzle.lineTo new P.Point W, H
 		
 		# Bottom edge
-		zero = (rectangle.width - rectangle.height) / 2
-		one = zero + rectangle.height
-		half = rectangle.height / 2
-		quarter = rectangle.height / 4
-		
 		if pieceEdges[i].bottom is 1
 
 			# Outwards
@@ -97,7 +141,7 @@ document.body.addEventListener 'touchmove', (event) ->
 
 		else if pieceEdges[i].bottom is -1
 
-			# Outwards
+			# Inwards
 			puzzle.lineTo new P.Point one - 3 * E, H
 			puzzle.quadraticCurveTo new P.Point(one - half, H), new P.Point(one - 3 * E, H - E)
 			puzzle.cubicCurveTo new P.Point(one - 2 * E, H - 2 * E), new P.Point(zero + 2 * E, H - 2 * E), new P.Point(zero + 3 * E, H - E)
@@ -128,24 +172,28 @@ document.body.addEventListener 'touchmove', (event) ->
 		
 		# The dropzone for the piece
 		dropZone = puzzle.clone()
-		dropZone.point = new P.Point 0, 0
 		dropZone.fillColor = 'white'
 		dropZone.opacity = 0.5
 		dropZoneLayer.addChild dropZone
 
-		difference = puzzle.bounds.width - rectangle.width
-		difference /= 2 if pieceEdges[i].left is 1 and pieceEdges[i].right is 1
+		differenceHorizontally = puzzle.bounds.width - rectangle.width
+		differenceHorizontally /= 2 if pieceEdges[i].left is 1 and pieceEdges[i].right is 1
+
+		differenceVertically = puzzle.bounds.height - rectangle.height
+		differenceVertically /= 2 if pieceEdges[i].left is 1 and pieceEdges[i].right is 1
 
 		# Set correct top left
-		dropZone.bounds.x = i * rectangle.width
-		dropZone.bounds.x -= difference if pieceEdges[i].left > 0
+		dropZone.bounds.x = (i % 3) * rectangle.width
+		dropZone.bounds.x -= differenceHorizontally if pieceEdges[i].left > 0
+		dropZone.bounds.y = Math.floor(i / 3) * rectangle.height
+		dropZone.bounds.y -= differenceVertically if pieceEdges[i].top > 0
 
 		# The edge will serve as the mask for the piece
 		pieceEdge = puzzle.clone()
 
 		pieceBackground = new P.Raster
 			source: '//hufkens.net/wp-content/uploads/2012/10/bumba-win8.png'
-			position: new P.Point P.view.center.x - i * rectangle.width, .7 * P.view.center.y
+			position: new P.Point P.view.center.x - (i % 3) * rectangle.width, .7 * P.view.center.y - Math.floor(i / 3) * rectangle.height
 
 		pieceBackground.onLoad = () ->
 			@size = new P.Size P.view.size.width, .7 * P.view.size.height
@@ -153,8 +201,10 @@ document.body.addEventListener 'touchmove', (event) ->
 		# Create a Group using the mask and the background
 		pieceGroup = new P.Group pieceEdge, pieceBackground, pieceEdge.clone()
 		pieceGroup.clipped = true
-		pieceGroup.bounds.x = i * rectangle.width
-		pieceGroup.bounds.x -= difference if pieceEdges[i].left > 0
+		pieceGroup.bounds.x = (i % 3) * rectangle.width
+		pieceGroup.bounds.x -= differenceHorizontally if pieceEdges[i].left > 0
+		pieceGroup.bounds.y = Math.floor(i / 3) * rectangle.height
+		pieceGroup.bounds.y -= differenceVertically if pieceEdges[i].top > 0
 		pieceGroup.strokeColor = 'black'
 		piecesLayer.addChild pieceGroup
 
