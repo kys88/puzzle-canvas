@@ -82,17 +82,24 @@ document.body.addEventListener 'touchmove', (event) ->
 			if possiblePieces[i].group.isAbove actualPiece.group
 				actualPiece = possiblePieces[i]
 
+		for piece in pieces
+			if piece.zone.contains event.point
+				piece.zone.fillColor = 'gray'
+
 		actualPiece.group.strokeWidth = 10
 		actualPiece.group.bringToFront()
 
 	tool.onMouseUp = (event) ->
+		return unless actualPiece
 		
 		# Possibly snap to grid
 		if actualPiece.zone.contains event.point
 			actualPiece.group.position = background.position
 
 		# Reset
-		piece.group.strokeWidth = 0 for piece in pieces
+		for piece in pieces
+			piece.group.strokeWidth = 0 
+			piece.zone.fillColor = 'white'
 		actualPiece = null
 		dragging = false
 
