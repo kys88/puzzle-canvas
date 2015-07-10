@@ -1,5 +1,7 @@
-((P) ->
+#document.body.addEventListener 'touchmove', (event) ->
+#	event.preventDefault()
 
+((P) ->
 	canvas = document.getElementById 'canvas'
 	P.setup canvas
 
