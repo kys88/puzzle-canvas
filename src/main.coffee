@@ -86,6 +86,10 @@ document.body.addEventListener 'touchmove', (event) ->
 		actualPiece.group.bringToFront()
 
 	tool.onMouseUp = (event) ->
+		
+		# Possibly snap to grid
+		if actualPiece.zone.contains event.point
+			actualPiece.group.position = background.position
 
 		# Reset
 		piece.group.strokeWidth = 0 for piece in pieces
