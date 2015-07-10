@@ -50,6 +50,8 @@ document.body.addEventListener 'touchmove', (event) ->
 		W = rectangle.width
 		H = rectangle.height
 
+		E = H / 8
+
 		puzzle = new P.Path()
 		puzzle.strokeWidth = 0
 
@@ -63,18 +65,18 @@ document.body.addEventListener 'touchmove', (event) ->
 		if pieceEdges[i].right is 1
 
 			# Outwards
-			puzzle.lineTo new P.Point W, H / 4
-			puzzle.quadraticCurveTo new P.Point(W, H / 2), new P.Point(W + H / 4, H / 4)
-			puzzle.cubicCurveTo new P.Point(W + H / 2, 0), new P.Point(W + H / 2, H), new P.Point(W + H / 4, H * 3 / 4)
-			puzzle.quadraticCurveTo new P.Point(W, H / 2), new P.Point(W, H * 3 / 4)
+			puzzle.lineTo new P.Point W, 3 * E
+			puzzle.quadraticCurveTo new P.Point(W, H / 2), new P.Point(W + E, 3 * E)
+			puzzle.cubicCurveTo new P.Point(W + 2 * E, 2 * E), new P.Point(W + 2 * E, 6 * E), new P.Point(W + E, 5 * E)
+			puzzle.quadraticCurveTo new P.Point(W, H / 2), new P.Point(W, 5 * E)
 		
 		else if pieceEdges[i].right is -1
 
 			# Inwards
-			puzzle.lineTo new P.Point W, H / 4
-			puzzle.quadraticCurveTo new P.Point(W, H / 2), new P.Point(W - H / 4, H / 4)
-			puzzle.cubicCurveTo new P.Point(W - H / 2, 0), new P.Point(W - H / 2, H), new P.Point(W - H / 4, H * 3 / 4)
-			puzzle.quadraticCurveTo new P.Point(W, H / 2), new P.Point(W, H * 3 / 4)
+			puzzle.lineTo new P.Point W, 3 * E
+			puzzle.quadraticCurveTo new P.Point(W, H / 2), new P.Point(W - E, 3 * E)
+			puzzle.cubicCurveTo new P.Point(W - 2 * E, 2 * E), new P.Point(W - 2 * E, 6 * E), new P.Point(W - E, 5 * E)
+			puzzle.quadraticCurveTo new P.Point(W, H / 2), new P.Point(W, 5 * E)
 
 		# Straight
 		puzzle.lineTo new P.Point W, H
@@ -108,18 +110,18 @@ document.body.addEventListener 'touchmove', (event) ->
 		if pieceEdges[i].left is 1
 
 			# Outwards
-			puzzle.lineTo new P.Point 0, H * 3 / 4
-			puzzle.quadraticCurveTo new P.Point(0, H / 2), new P.Point(0 - H / 4, H * 3 / 4)
-			puzzle.cubicCurveTo new P.Point(0 - H / 2, H), new P.Point(0 - H / 2, 0), new P.Point(0 - H / 4, H / 4)
-			puzzle.quadraticCurveTo new P.Point(0, H / 2), new P.Point(0, H / 4)
+			puzzle.lineTo new P.Point 0, 5 * E
+			puzzle.quadraticCurveTo new P.Point(0, H / 2), new P.Point(-E, 5 * E)
+			puzzle.cubicCurveTo new P.Point(-2 * E, 6 * E), new P.Point(-2 * E, 2 * E), new P.Point(-E, 3 * E)
+			puzzle.quadraticCurveTo new P.Point(0, H / 2), new P.Point(0, 3 * E)
 		
 		else if pieceEdges[i].left is -1
 
 			# Inwards
-			puzzle.lineTo new P.Point 0, H * 3 / 4
-			puzzle.quadraticCurveTo new P.Point(0, H / 2), new P.Point(0 + H / 4, H * 3 / 4)
-			puzzle.cubicCurveTo new P.Point(0 + H / 2, H), new P.Point(0 + H / 2, 0), new P.Point(0 + H / 4, H / 4)
-			puzzle.quadraticCurveTo new P.Point(0, H / 2), new P.Point(0, H / 4)
+			puzzle.lineTo new P.Point 0, 5 * E
+			puzzle.quadraticCurveTo new P.Point(0, H / 2), new P.Point(E, 5 * E)
+			puzzle.cubicCurveTo new P.Point(2 * E, 6 * E), new P.Point(2 * E, 2 * E), new P.Point(E, 3 * E)
+			puzzle.quadraticCurveTo new P.Point(0, H / 2), new P.Point(0, 3 * E)
 
 		# Close
 		puzzle.closePath()
@@ -192,7 +194,7 @@ document.body.addEventListener 'touchmove', (event) ->
 			if piece.zone.contains event.point
 				piece.zone.fillColor = 'gray'
 
-		actualPiece.group.strokeWidth = 10
+		actualPiece.group.strokeWidth = 3
 		actualPiece.group.bringToFront()
 
 	tool.onMouseUp = (event) ->
