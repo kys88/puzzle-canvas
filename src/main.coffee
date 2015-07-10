@@ -44,11 +44,17 @@
 			edge: pieceEdge
 			group: pieceGroup
 
-	tool = new P.Tool()
-	tool.onMouseMove = (event) ->
-		piece.group.strokeWidth = 0 for piece in pieces
+	actualPiece = null
+	dragging = false
 
+	tool = new P.Tool()
+	tool.onMouseDown = (event) ->
+		return if dragging
+
+		# Reset
+		piece.group.strokeWidth = 0 for piece in pieces
 		possiblePieces = []
+		actualPiece = null
 
 		for piece in pieces
 			if piece.edge.contains event.point
@@ -63,5 +69,17 @@
 				actualPiece = possiblePieces[i]
 
 		actualPiece.group.strokeWidth = 10
+		actualPiece.group.bringToFront()
+
+	tool.onMouseUp = (event) ->
+		actualPiece = null
+		dragging = false
+
+	tool.onMouseMove = (event) ->
+		return unless actualPiece
+		dragging = true
+		actualPiece.group.position.x += event.delta.x
+		actualPiece.group.position.y += event.delta.y
+
 
 )(paper)
