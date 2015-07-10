@@ -84,24 +84,24 @@ document.body.addEventListener 'touchmove', (event) ->
 		# Bottom edge
 		zero = (rectangle.width - rectangle.height) / 2
 		one = zero + rectangle.height
-		quarter = rectangle.height / 4
 		half = rectangle.height / 2
+		quarter = rectangle.height / 4
 		
 		if pieceEdges[i].bottom is 1
 
 			# Outwards
-			puzzle.lineTo new P.Point one - quarter, H
-			puzzle.quadraticCurveTo new P.Point(one - half, H), new P.Point(one - quarter, H + quarter)
-			puzzle.cubicCurveTo new P.Point(one, H + half), new P.Point(zero, H + half), new P.Point(zero + quarter, H + quarter)
-			puzzle.quadraticCurveTo new P.Point(zero + half, H), new P.Point(zero + quarter, H)
+			puzzle.lineTo new P.Point one - 3 * E, H
+			puzzle.quadraticCurveTo new P.Point(one - half, H), new P.Point(one - 3 * E, H + E)
+			puzzle.cubicCurveTo new P.Point(one - 2 * E, H + 2 * E), new P.Point(zero + 2 * E, H + 2 * E), new P.Point(zero + 3 * E, H + E)
+			puzzle.quadraticCurveTo new P.Point(one - half, H), new P.Point(zero + 3 * E, H)
 
 		else if pieceEdges[i].bottom is -1
 
 			# Outwards
-			puzzle.lineTo new P.Point one - quarter, H
-			puzzle.quadraticCurveTo new P.Point(one - half, H), new P.Point(one - quarter, H - quarter)
-			puzzle.cubicCurveTo new P.Point(one, H - half), new P.Point(zero, H - half), new P.Point(zero + quarter, H - quarter)
-			puzzle.quadraticCurveTo new P.Point(zero + half, H), new P.Point(zero + quarter, H)
+			puzzle.lineTo new P.Point one - 3 * E, H
+			puzzle.quadraticCurveTo new P.Point(one - half, H), new P.Point(one - 3 * E, H - E)
+			puzzle.cubicCurveTo new P.Point(one - 2 * E, H - 2 * E), new P.Point(zero + 2 * E, H - 2 * E), new P.Point(zero + 3 * E, H - E)
+			puzzle.quadraticCurveTo new P.Point(one - half, H), new P.Point(zero + 3 * E, H)
 
 		# Straight
 		puzzle.lineTo new P.Point 0, H
