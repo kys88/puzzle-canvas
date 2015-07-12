@@ -259,7 +259,7 @@ document.body.addEventListener 'touchmove', (event) ->
 
 		# Reset
 		for piece in pieces
-			piece.group.strokeWidth = 0 
+			piece.group.strokeWidth = 0
 			piece.zone.fillColor = 'white'
 		actualPiece = null
 		dragging = false
